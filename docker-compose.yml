@@ -32,7 +32,7 @@ services:
       DB_PASS: ${MYSQL_ROOT_PASSWORD}
       DB_NAME: ${MYSQL_DATABASE}
     ports:
-      - 8080:80
+      - 8081:80
   daemon:
     build: dockerfiles/daemon
     depends_on:
@@ -42,7 +42,10 @@ services:
     ports:
       - 27500:27500
     working_dir: /scripts
-    command: perl ./hlstats.pl --db-host db --db-username root --db-password ${MYSQL_ROOT_PASSWORD} --db-name ${MYSQL_DATABASE}
+    command: perl ./hlstats.pl --db-host db --db-username root --db-password ${MYSQL_ROOT_PASSWORD} --db-name ${MYSQL_DATABASE} -dd
+    networks:
+      default:
+        ipv4_address: 172.99.0.10
   awards:
     build: dockerfiles/daemon
     depends_on:
@@ -65,3 +68,8 @@ services:
       DB_NAME: ${MYSQL_DATABASE}
     working_dir: /data
     command: php generate.php --disable-cache
+
+networks:
+  default:
+    name: hlds_network
+    external: true
